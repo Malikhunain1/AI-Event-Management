@@ -1,6 +1,6 @@
-// client/src/components/EventForm.js
 import React, { useState } from "react";
 import axios from "axios";
+import './EventForm.css';
 
 const EventForm = () => {
   const [form, setForm] = useState({
@@ -18,7 +18,7 @@ const EventForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/events/add", form);
+      await axios.post("http://localhost:5000/api/events/create", form);
       alert("✅ Event registered!");
       setForm({ name: "", date: "", type: "", expectedAttendees: "", location: "" });
     } catch (err) {
@@ -47,4 +47,3 @@ const EventForm = () => {
 };
 
 export default EventForm;
-

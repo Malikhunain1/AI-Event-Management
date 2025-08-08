@@ -1,65 +1,81 @@
-// client/src/components/FeedbackForm.js
 import React, { useState } from "react";
 import axios from "axios";
+import "./FeedbackForm.css"; // Ensure your CSS is imported
 
-const FeedbackForm = ({ eventId }) => {
-  const [form, setForm] = useState({
-    userName: "",
-    rating: 5,
-    comment: ""
+const FeedbackForm = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    event: "",
+    feedback: "",
   });
 
+  const [prediction, setPrediction] = useState("");
+  const [message, setMessage] = useState("");
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await axios.post("http://localhost:5000/api/feedback/submit", {
-        ...form,
-        eventId
-      });
-      alert("✅ Feedback submitted!");
-      setForm({ userName: "", rating: 5, comment: "" });
-    } catch (err) {
-      alert("❌ Error: " + err.message);
+      // Send feedback data to backend
+     const response= await axios.post("http://localhost:5000/api/feedback/submit", {
+  userName: formData.name,
+  comment: formData.feedback,
+  rating: 5, // Or whatever default/intended rating you want
+  eventId: null // Or pass actual eventId if available
+});
+
+
+
+      // Show prediction result
+      setPrediction(response.data.prediction);
+      setMessage("Feedback submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      setMessage("Something went wrong saddi jaan chd deyo.");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 shadow rounded w-96 mx-auto mt-10 bg-white">
-      <h2 className="text-xl font-bold mb-4">Submit Feedback</h2>
-      <input
-        type="text"
-        name="userName"
-        placeholder="Your Name"
-        value={form.userName}
-        onChange={handleChange}
-        className="mb-2 p-2 border rounded w-full"
-        required
-      />
-      <select
-        name="rating"
-        value={form.rating}
-        onChange={handleChange}
-        className="mb-2 p-2 border rounded w-full"
-      >
-        {[1, 2, 3, 4, 5].map((num) => (
-          <option key={num} value={num}>{num} Star</option>
-        ))}
-      </select>
-      <textarea
-        name="comment"
-        placeholder="Comment"
-        value={form.comment}
-        onChange={handleChange}
-        className="mb-2 p-2 border rounded w-full"
-        rows={4}
-        required
-      />
-      <button className="bg-green-500 text-white p-2 rounded w-full">Submit Feedback</button>
-    </form>
+    <div className="feedback-form">
+      <h2>Submit Feedback</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="name"
+          placeholder="Your Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="text"
+          name="event"
+          placeholder="Event Name"
+          value={formData.event}
+          onChange={handleChange}
+          required
+        />
+        <textarea
+          name="feedback"
+          placeholder="Your Feedback"
+          value={formData.feedback}
+          onChange={handleChange}
+          required
+        ></textarea>
+        <button type="submit">Submit</button>
+      </form>
+
+      {message && <p className="message">{message}</p>}
+      {prediction && (
+        <div className="prediction-box">
+          <strong>AI Prediction:</strong> {prediction}
+        </div>
+      )}
+    </div>
   );
 };
 

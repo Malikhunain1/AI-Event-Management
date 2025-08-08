@@ -1,0 +1,7 @@
+@import url('./LoginPage.css');
+
+/* Reuse the same styles, but add this for success message */
+.auth-success {
+  color: green;
+  margin-bottom: 10px;
+}
