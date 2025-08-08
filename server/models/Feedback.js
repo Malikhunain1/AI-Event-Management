@@ -1,10 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const feedbackSchema = new mongoose.Schema({
-    eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
-    user: { type: String },
-    comment: { type: String, required: true },
-    sentiment: { type: String } // Positive, Neutral, Negative
+  userName: { type: String, required: true },
+  rating: { type: Number, required: true },
+  comment: { type: String, required: true },
+  eventId: { type: mongoose.Schema.Types.ObjectId, ref: "Event" }, // optional
+prediction: { type: String }
 });
 
-module.exports = mongoose.model('Feedback', feedbackSchema);
+module.exports = mongoose.model("Feedback", feedbackSchema);

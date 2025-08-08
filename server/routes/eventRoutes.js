@@ -1,38 +1,31 @@
-const express = require('express');
+// server/routes/eventRoutes.js
+
+const express = require("express");
 const router = express.Router();
-const Event = require('../models/Event');
-const predictAttendance = require('../ai/predictattendance');
-const manageResources = require('../ai/manageresources');
+const Event = require("../models/eventModel");
 
-router.post('/', async (req, res) => {
-    try {
-        const predictedAttendance = predictAttendance(req.body);
-        const resourceStatus = manageResources(
-            req.body.resources || [],
-            ['mic', 'speaker', 'projector']
-        );
-
-        const newEvent = new Event({
-            ...req.body,
-            predictedAttendance,
-            resourceStatus
-        });
-
-        await newEvent.save();
-        res.status(201).json(newEvent);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+// POST route to create a new event
+router.post("/create", async (req, res) => {
+  try {
+    console.log("📥 Event Data Received:", req.body);
+    const newEvent = new Event(req.body);
+    await newEvent.save();
+    res.status(201).json({ message: "✅ Event created successfully" });
+  } catch (err) {
+    console.error("❌ Error creating event:", err.message);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
-router.get('/', async (req, res) => {
-    try {
-        const events = await Event.find();
-        res.json(events);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+// ✅ NEW: GET all events
+router.get("/", async (req, res) => {
+  try {
+    const events = await Event.find(); // get all events
+    res.json(events);
+  } catch (err) {
+    console.error("❌ Error fetching events:", err.message);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 module.exports = router;
-
